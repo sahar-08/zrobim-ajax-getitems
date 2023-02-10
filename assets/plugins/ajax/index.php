@@ -56,6 +56,7 @@ if ($modx->event->name == 'OnPageNotFound') {
                 $p_ids[$p['id']] = $pid;
             }
         }
+        $out_p = [];
         foreach ($items as $k => $ps) {
             $doc = new modResource($modx,true);
             foreach ($ps as $kp => $p) {
@@ -65,6 +66,7 @@ if ($modx->event->name == 'OnPageNotFound') {
 
                 $ex_base_p = (int)$modx->db->getValue($modx->db->select('contentid',$modx->getFullTableName('site_tmplvar_contentvalues'),'tmplvarid = '.$base_id.' and value = '.$p['parent'],'id ASC',1));
                 $p['parent'] = $ex_base_p ? $ex_base_p : $modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), 'pagetitle ="' . $modx->db->escape($p['parent_title']) . '" or menutitle = "' . $modx->db->escape($p['parent_title']) . '" '));
+                $out_p[$pid] = $p['parent'];
                 if(!$pid){
                     $ex_pid = $p['id'];
                     unset($p['id']);
@@ -97,6 +99,6 @@ if ($modx->event->name == 'OnPageNotFound') {
             }
         }
         http_response_code(200);
-        die(json_encode(array('result' => $pids)));
+        die(json_encode(array('result' => $out_p)));
     }
 }
