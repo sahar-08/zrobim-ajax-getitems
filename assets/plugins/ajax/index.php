@@ -3,9 +3,10 @@
  * @var $modx
  * @var $base_id
  */
-include_once MODX_BASE_PATH . 'assets/lib/MODxAPI/modResource.php';
+
 if ($modx->event->name == 'OnPageNotFound') {
     if ($_GET['q'] == 'get_docs') {
+        include_once MODX_BASE_PATH . 'assets/lib/MODxAPI/modResource.php';
         $headers = getallheaders();
         if (!isset($headers['Authorization']) and $headers['Auth'] !== 'Basic ' . md5($modx->config['site_url'] . '123')) {
             die(json_encode(array('result' => 'Access error! invalid token!')));
