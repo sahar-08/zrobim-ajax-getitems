@@ -1,6 +1,6 @@
 //<?php
 /**
-* AJAX
+* ajax
 *
 * ajax plugins
 *
