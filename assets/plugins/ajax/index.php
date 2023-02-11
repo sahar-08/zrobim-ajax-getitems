@@ -32,12 +32,12 @@ if ($modx->event->name == 'OnPageNotFound') {
                 $pid = $ex_base ? $ex_base : $modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), 'pagetitle = "' . $modx->db->escape($p['menutitle']) . '" or  menutitle = "' . $modx->db->escape($p['menutitle']) . '"'));
 
                 if(!$pid){
-
                     $ex_pid = $p['id'];
                     unset($p['id']);
                     $doc->create($p);
                     $doc->set('base_id',$ex_pid);
-
+                    $pid = $doc->save(false,false);
+                    $p_ids[$p['id']] = $pid;
                 }else{
                     if($headers['post_type'] == 'upd'){
                         $doc->edit($pid);
@@ -49,11 +49,13 @@ if ($modx->event->name == 'OnPageNotFound') {
                                 $doc->set($kf, $p[$kf]);
                             }
                         }
+                        $pid = $doc->save(false,false);
+                        $p_ids[$p['id']] = $pid;
                     }
                 }
-                $pid = $doc->save(false,false);
 
-                $p_ids[$p['id']] = $pid;
+
+
             }
         }
         $out_p = [];
@@ -65,7 +67,7 @@ if ($modx->event->name == 'OnPageNotFound') {
                 $pid = $ex_base ? $ex_base : $modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), ' pagetitle ="' . $modx->db->escape($p['pagetitle']) . '" or  menutitle = "' . $modx->db->escape($p['menutitle']) . '"'));
 
                 $ex_base_p = (int)$modx->db->getValue($modx->db->select('contentid',$modx->getFullTableName('site_tmplvar_contentvalues'),'tmplvarid = '.$base_id.' and value = '.$p['parent'],'id ASC',1));
-                $p['parent'] = $ex_base_p ? $ex_base_p : $modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), 'pagetitle ="' . $modx->db->escape($p['parent_title']) . '" or menutitle = "' . $modx->db->escape($p['parent_title']) . '" '));
+                $p['parent'] = $ex_base_p != 0 ? $ex_base_p : (int)$modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), 'pagetitle ="' . $modx->db->escape($p['parent_title']) . '" or menutitle = "' . $modx->db->escape($p['parent_title']) . '" '));
                 $out_p[$pid] = $p['parent'];
                 if(!$pid){
                     $ex_pid = $p['id'];
@@ -77,17 +79,12 @@ if ($modx->event->name == 'OnPageNotFound') {
                         $doc->edit($pid);
                         unset($p['id']);
 
-
                         $document = $modx->getDocumentObject('id',$pid);
                         foreach ($document as $kf => $fields){
-                            if(!is_array($p[$kf] )){
-                                if($p[$kf] != $fields){
-                                    $doc->set($kf, $p[$kf]);
-                                }
+                            if(!is_array($p[$kf])){
+                                $doc->set($kf, $p[$kf]);
                             }else{
-                                if(($p[$kf][0] == $fields[$kf][0]) and ($p[$kf][1] != $fields[$kf][1])){
-                                    $doc->set($kf, $p[$kf]);
-                                }
+                                $doc->set($kf, $p[$kf][1]);
                             }
 
                         }
