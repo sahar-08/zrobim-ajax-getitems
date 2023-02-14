@@ -3,7 +3,7 @@
 *
 * base_id
 *
-
+* @category
 * @name            base_id
 * @internal        @caption ИД на сайте zrobim.by
 * @internal        @input_type text
@@ -11,7 +11,6 @@
 * @internal        @input_options
 * @internal        @output_widget
 * @internal        @output_widget_params
-* @internal        @lock_tv 0
-* @internal        @template_assignments
+* @internal        @modx_category
 * @internal        @installset sample
 */
