@@ -32,9 +32,16 @@ if ($modx->event->name == 'OnPageNotFound') {
                 $pid = $ex_base ? $ex_base : $modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), 'pagetitle = "' . $modx->db->escape($p['menutitle']) . '" or  menutitle = "' . $modx->db->escape($p['menutitle']) . '"'));
 
                 if(!$pid){
+
                     $ex_pid = $p['id'];
                     unset($p['id']);
                     $doc->create($p);
+                    foreach ($p as $kf => $fields){
+                        if(is_array($fields)){
+                            $doc->set($kf, $fields[1]);
+                        }else
+                            $doc->set($kf,$fields);
+                    }
                     $doc->set('base_id',$ex_pid);
                     $pid = $doc->save(false,false);
                     $p_ids[$p['id']] = $pid;
@@ -46,7 +53,10 @@ if ($modx->event->name == 'OnPageNotFound') {
 
                         foreach ($document as $kf => $fields){
                             if($p[$kf] != $fields){
-                                $doc->set($kf, $p[$kf]);
+                                if(is_array($fields)){
+                                    $doc->set($kf, $p[$kf][1]);
+                                }else
+                                    $doc->set($kf, $p[$kf]);
                             }
                         }
                         $pid = $doc->save(false,false);
@@ -75,19 +85,17 @@ if ($modx->event->name == 'OnPageNotFound') {
                     $doc->create($p);
                     $doc->set('base_id',$ex_pid);
                 }else{
-                    if($headers['post_type'] == 'upd'){
-                        $doc->edit($pid);
-                        unset($p['id']);
+                    $doc->edit($pid);
+                    unset($p['id']);
 
-                        $document = $modx->getDocumentObject('id',$pid);
-                        foreach ($document as $kf => $fields){
-                            if(!is_array($p[$kf])){
-                                $doc->set($kf, $p[$kf]);
-                            }else{
-                                $doc->set($kf, $p[$kf][1]);
-                            }
-
+                    $document = $modx->getDocumentObject('id',$pid);
+                    foreach ($document as $kf => $fields){
+                        if(!is_array($p[$kf])){
+                            $doc->set($kf, $p[$kf]);
+                        }else{
+                            $doc->set($kf, $p[$kf][1]);
                         }
+
                     }
                 }
                 $pid = $doc->save(true,false);
