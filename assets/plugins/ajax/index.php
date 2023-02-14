@@ -74,7 +74,7 @@ if ($modx->event->name == 'OnPageNotFound') {
                 $ex_base_p = (int)$modx->db->getValue($modx->db->select('contentid', $modx->getFullTableName('site_tmplvar_contentvalues'), 'tmplvarid = ' . $base_id . ' and value = ' . $p['parent'], 'id ASC', 1));
                 $p['parent'] = $ex_base_p != 0 ? $ex_base_p : (int)$modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), 'pagetitle ="' . $modx->db->escape($p['parent_title']) . '" or menutitle = "' . $modx->db->escape($p['parent_title']) . '" '));
                 $p['menutitle'] = !empty($p['menutitle']) ? $p['menutitle'] : $p['pagetitle'];
-                $pid = $ex_base ? $ex_base : $modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), ' pagetitle ="' . $modx->db->escape($p['pagetitle']) . '" or  menutitle = "' . $modx->db->escape($p['menutitle']) . '" and parent ='.$p['parent']));
+                $pid = $ex_base ? $ex_base : $modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), '( pagetitle ="' . $modx->db->escape($p['pagetitle']) . '" or  menutitle = "' . $modx->db->escape($p['menutitle']) . '" ) and parent ='.$p['parent']));
 
 
                 $out_p[$pid] = $p['parent'];
