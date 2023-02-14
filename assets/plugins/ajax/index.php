@@ -85,7 +85,9 @@ if ($modx->event->name == 'OnPageNotFound') {
                     $doc->set('base_id', $ex_pid);
                 } else {
                     $doc->edit($pid);
+                    $ex_pid = $p['id'];
                     unset($p['id']);
+                    $doc->set('base_id', $ex_pid);
                     $document = $modx->getDocumentObject('id', $pid);
                     foreach ($document as $kf => $fields) {
                         if (!is_array($p[$kf])) {
