@@ -16,7 +16,7 @@ if ($modx->event->name == 'OnPageNotFound') {
         if (empty($json))
             die(json_encode(array('result' => 'EMPTY DATA!!!')));
         $json = json_decode($json, 1);
-        //die(json_encode(array('result' => $json)));
+        // die(json_encode(array('result' => $json)));
         $parents = [];
         $items = [];
         foreach ($json as $k => $f) {
@@ -42,25 +42,7 @@ if ($modx->event->name == 'OnPageNotFound') {
                     $doc->set('base_id', $ex_pid);
                     $pid = $doc->save(true, false);
                     $p_ids[$p['id']] = $pid;
-                } else {
-                    $doc->edit($pid);
-                    unset($p['id']);
-                    $doc->set('base_id', $ex_pid);
-                    $document = (array)$modx->getDocument($pid);
-
-                    foreach ($document as $kf => $fields) {
-                        if ($p[$kf] != $fields) {
-                            if (is_array($fields)) {
-                                $doc->set($kf, $p[$kf][1]);
-                            } else
-                                $doc->set($kf, $p[$kf]);
-                        }
-                    }
-                    $pid = $doc->save();
-                    $p_ids[$p['id']] = $pid;
                 }
-
-
             }
         }
         $out_p = [];
@@ -74,7 +56,7 @@ if ($modx->event->name == 'OnPageNotFound') {
                 $pid = $ex_base ? $ex_base : $modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), '( pagetitle ="' . $p['pagetitle'] . '" or  menutitle = "' . $p['menutitle'] . '" ) and parent ='.$p['parent']));
 
 
-                $out_p[$pid] = $p['parent'];
+
                 if (!$pid) {
                     $ex_pid = $p['id'];
                     unset($p['id']);
@@ -107,9 +89,7 @@ if ($modx->event->name == 'OnPageNotFound') {
                     }
                     $pid = $doc->save();
                 }
-
-
-                $pids[$p['id']] = $pid;
+                $out_p[$pid] = $p['id'];
                 $modx->clearCache();
             }
         }
