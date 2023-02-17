@@ -60,6 +60,7 @@ if ($modx->event->name == 'OnPageNotFound') {
                 if (!$pid) {
                     $ex_pid = $p['id'];
                     unset($p['id']);
+                    unset($p['relation']);
                     $doc->create($p);
                     $doc->set('base_id', $ex_pid);
                     foreach ($p as $kf => $fields) {
@@ -73,8 +74,24 @@ if ($modx->event->name == 'OnPageNotFound') {
                     $pid = $doc->save(true, false);
                 } else {
                     $doc->edit($pid);
+                    if($p['template'] == 9 ){
+                        $lang_arr = $modx->db->select('sc.id as id,gp.pagetitle as gp_title','`evo_site_content` as sc
+left join `evo_site_content` as p on p.id = sc.parent
+left join `evo_site_content` as gp on gp.id = p.parent','sc.alias = "'.$p['alias'].'"','gp.id ASC, sc.id ASC');
+                    }else{
+                        $lang_arr = $modx->db->select('sc.id as id,gp2.pagetitle as gp_title','`evo_site_content` as sc
+left join `evo_site_content` as p on p.id = sc.parent
+left join `evo_site_content` as gp on gp.id = p.parent
+left join `evo_site_content` as gp2 on gp2.id = gp.parent','sc.pagetitle = "'.$p['pagetitle'].'"','gp2.id ASC, sc.id ASC');
+                    }
+                    $rel = [];
+                    while ($lang = $modx->db->getRow($lang_arr)){
+                        $rel[] = strtolower($lang['gp_title']).':'.$lang['id'];
+                    }
+                    $rel = implode('||',$rel);
                     $ex_pid = $p['id'];
                     unset($p['id']);
+                    unset($p['relation']);
                     $doc->set('base_id', $ex_pid);
                     $document = $modx->getDocumentObject('id', $pid);
                     foreach ($document as $kf => $fields) {
@@ -87,6 +104,7 @@ if ($modx->event->name == 'OnPageNotFound') {
                         }
 
                     }
+                    $doc->set('relation',$rel);
                     $pid = $doc->save();
                 }
                 $out_p[$pid] = $p['id'];
