@@ -8,7 +8,7 @@
  * @version     0.1.5
  * @author      sahar-08
  * @internal    @events OnPageNotFound
- * @internal    @properties &base_id=ID tv base_id;text;
+ * @internal    @properties &base_id=ID tv base_id;text; &relation = языковые связи;text;
  * @internal    @modx_category Manager and Admin
  * @internal    @installset base
 */
