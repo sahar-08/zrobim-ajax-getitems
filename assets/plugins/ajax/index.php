@@ -55,8 +55,6 @@ if ($modx->event->name == 'OnPageNotFound') {
                 $p['menutitle'] = !empty($p['menutitle']) ? $p['menutitle'] : $p['pagetitle'];
                 $pid = $ex_base ? $ex_base : $modx->db->getValue($modx->db->select('id', $modx->getFullTableName('site_content'), '( pagetitle ="' . $p['pagetitle'] . '" or  menutitle = "' . $p['menutitle'] . '" ) and parent ='.$p['parent']));
 
-
-
                 if (!$pid) {
                     $ex_pid = $p['id'];
                     unset($p['id']);
